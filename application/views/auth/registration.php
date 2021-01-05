@@ -48,6 +48,16 @@
 									placeholder="Nomor Induk" value="<?= set_value('no_induk');?>">
 								<?= form_error('no_induk', '<small class="text-danger pl-3">', '</small>'); ?>
 							</div>
+							<div class="form-group">
+								<select name="kelas" id="kelas" class="form-control">
+									<option selected>Pilih Kelas Dibawah Ini !</option>
+									<?php foreach($kelas as $k){ ?>
+									<option value="<?= $k['kelas']?>"><?= $k['kelas'];?></option>
+									<?php 
+									} ?>
+								</select>
+								<?= form_error('kelas', '<small class="text-danger pl-3">', '</small>'); ?>
+							</div>
 							<div class="form-group row">
 								<div class="col-sm-6 mb-3 mb-sm-0">
 									<input type="password" class="form-control form-control-user" id="password1"

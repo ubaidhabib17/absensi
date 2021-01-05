@@ -83,6 +83,7 @@ class Auth extends CI_Controller
 		$this->form_validation->set_rules('nama_depan', 'Nama Depan', 'required|trim');
 		$this->form_validation->set_rules('nama_belakang', 'Nama Belakang', 'required|trim');
 		$this->form_validation->set_rules('no_induk', 'No Induk', 'required|trim|is_unique[user.no_induk]', ['is_unique' => 'This No Induk has already registered!']);
+		$this->form_validation->set_rules('kelas', 'Kelas', 'required|trim|is_unique[user.kelas]', ['is_unique' => 'This Kelas has already registered!']);
 		$this->form_validation->set_rules('pertanyaan', 'Pertanyaan', 'required|trim');
 		$this->form_validation->set_rules('jawaban', 'Jawaban', 'required|trim');
 		$this->form_validation->set_rules('email', 'Email', 'required|trim|valid_email|is_unique[user.email]', ['is_unique' => 'This email has already registered!']);
@@ -91,6 +92,7 @@ class Auth extends CI_Controller
 		if ($this->form_validation->run() == false) {
 			$data['title'] = 'Registration Page';
 			$data['pertanyaan'] = $this->db->get('pertanyaan')->result_array();
+			$data['kelas'] = $this->db->get('kelas')->result_array();
 			$this->load->view('templates/auth_header', $data);
 			$this->load->view('auth/registration', $data);
 			$this->load->view('templates/auth_footer');
@@ -106,7 +108,8 @@ class Auth extends CI_Controller
 				'password' => password_hash($this->input->post('password1'), PASSWORD_DEFAULT),
 				'role_id' => 2,
 				'is_active' => 0,
-				'date_created' => date('Y-m-d h:i:sa')
+				'date_created' => date('Y-m-d h:i:sa'),
+				'kelas' => $this->input->post('kelas')
 			];
 			
 			// token berupa bilangan random
@@ -135,8 +138,8 @@ class Auth extends CI_Controller
 		$config = [
 			'protocol' 	=> 'smtp',
 			'smtp_host' => 'ssl://smtp.googlemail.com',
-			'smtp_user' => 'myrepository31@gmail.com',
-			'smtp_pass' => 'sweetheart27',
+			'smtp_user' => 'absensiweb@gmail.com',
+			'smtp_pass' => 'absensi123',
 			'smtp_port'	=> 465,
 			'mailtype'	=> 'html',
 			'charset'	=> 'utf-8',
@@ -146,7 +149,7 @@ class Auth extends CI_Controller
 		$this->load->library('email', $config);
 		$this->email->initialize($config);
 
-		$this->email->from('myrepository31@gmail.com', 'SMP Negeri 2 Mojo');
+		$this->email->from('absensiweb@gmail.com', 'SMP Negeri 2 Mojo');
 		$this->email->to($this->input->post('email'));
 
 		if ($type == 'verify') {

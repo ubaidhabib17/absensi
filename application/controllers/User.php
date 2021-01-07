@@ -7,6 +7,7 @@
 			parent::__construct();
 			cek_login();
 			$this->load->model('Presensi_model');
+			$this->load->helper('url');
 		}
 		
 		public function index()
@@ -109,7 +110,8 @@
 			$this->form_validation->set_rules('jawaban', 'jawaban', 'required|trim');
 			$this->form_validation->set_rules('email', 'email', 'required|trim');
 			$this->form_validation->set_rules('id_user', 'id_user', 'required|trim');
-			$this->form_validation->set_rules('status', 'status', 'required');
+			// $this->form_validation->set_rules('status', 'status', 'required');
+			// $this->form_validation->set_rules('image', 'image', 'required');
 			
 			if ($this->form_validation->run() == false) {
 				if($this->session->userdata('role_id') == 1){
@@ -129,13 +131,27 @@
 			}else {
 				$pertanyaan = $_POST['pertanyaan'];
 				$jawaban= $_POST['jawaban'];
-				$jamBatas = strtotime('07:00:00');
-				if($jawaban == $this->session->userdata('jawaban') && $pertanyaan == $this->session->userdata('pertanyaan') && strtotime(date('H:i:s')) <= $jamBatas ){
+				$jamBatas = strtotime('07:30:00');
+				$jamPulang = strtotime('16:00:00');
+				// $encoded_data = $_POST['image'];
+				// $binary_data = base64_decode($encoded_data);
+				if($jawaban == $this->session->userdata('jawaban') && $pertanyaan == $this->session->userdata('pertanyaan') && strtotime(date('H:i:s')) <= $jamBatas){
 					$data = [
-						'status' => $this->input->post('status'),
+						'status' => 'Hadir',
 						'id_user' => $this->input->post('id_user'),
-						'tanggal' => date('Y-m-d h:i:sa')
+						'tanggal' => date('Y-m-d')
 					];
+				
+				$this->db->insert('presensi', $data);
+				$this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Data Absen Telah Ditambahkan!</div');
+				redirect('user/presensi', 'refresh');
+				}elseif ($jawaban == $this->session->userdata('jawaban') && $pertanyaan == $this->session->userdata('pertanyaan') && strtotime(date('H:i:s')) > $jamPulang || strtotime(date('H:i:s')) > $jamBatas) {
+					$data = [
+						'status' => 'Terlambat',
+						'id_user' => $this->input->post('id_user'),
+						'tanggal' => date('Y-m-d')
+					];
+				
 				$this->db->insert('presensi', $data);
 				$this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Data Absen Telah Ditambahkan!</div');
 				redirect('user/presensi', 'refresh');
